@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  kafka:
+    image: confluentinc/cp-kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment: # The host might be wrong
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      # Kafka supports both SSL (encrypted) and plaintext (unencrypted) connections
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      # Zookeeper spins up 3 instances by default. Tell kafka that we only have 1 offsets topic replication
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+  
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
