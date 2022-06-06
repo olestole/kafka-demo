@@ -1,13 +1,14 @@
 const { Kafka } = require("kafkajs");
-const msg = process.argv[2];
 
 const run = async () => {
   try {
+    // Create a new Kafka-object
     const kafka = new Kafka({
       clientId: "my-app",
       brokers: ["localhost:9092"], // Since you're working with zookeeper, you can have multiple brokers
     });
 
+    // Create a consumer
     const consumer = kafka.consumer({
       groupId: "test",
     });
@@ -15,13 +16,15 @@ const run = async () => {
     await consumer.connect();
     console.log("Connected");
 
+    // Subscribe to a topic and read from the beginning of the topic
     await consumer.subscribe({
       topic: "Users",
-      fromBeginning: true, // Read from the beginning of the topic. If you don't care about old messages -> False
+      fromBeginning: true, 
     });
 
+    // Consume messages
     await consumer.run({
-      eachMessage: async ({ topic, message, partition }) => {
+      eachMessage: async ({ message, partition }) => {
         console.log(
           `Received message ${message.value.toString()} on partition ${partition}`
         );
@@ -30,7 +33,6 @@ const run = async () => {
 
   } catch (error) {
     console.error(error);
-    // await consumer.disconnect();
   }
 };
 
